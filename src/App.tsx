@@ -1,29 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import { useTodos } from "./hooks/useTodos";
 
 function App() {
   const [count, setCount] = useState(0);
-  const [errorMesage, setErrorMesage] = useState(null);
-
-  const [todos, setTodos] = useState([]);
-
-  useEffect(() => {
-    fetch("https://dummyjson.com/todos")
-      .then((res) => res.json())
-      .then((res) => {
-        console.log('todos: ', res.todos);
-        setTodos(res.todos);
-        setErrorMesage(null);
-      }).catch((err) => {
-        console.log('error: ', err.statusText);
-        console.log('error: ', err.message);
-        console.log('error: ', err);
-        console.log(JSON.stringify(err));
-        setErrorMesage(err.message);
-      })
-  }, []);
+  
+  const { errorMesage, todos } = useTodos();
 
   return (
     <>

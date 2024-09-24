@@ -1,10 +1,13 @@
 import App from "./App";
 import { server } from "./test/mocks/server";
 import { render, screen, userEvent } from "./utils/test-utils";
-import { errorHandlers } from "./test/mocks/handlers";
-import { http, HttpResponse } from "msw";
+import { todosErrorHandlers, todosHandlers } from "./test/mocks/services/todos/todosHandlers";
 
 describe("App", () => {
+  beforeEach(() => {
+      server.use(todosHandlers);
+  });
+  
   it("checking whether vite and react text is available", () => {
     render(<App />);
     const text = screen.getByText("Vite + React");
@@ -22,12 +25,9 @@ describe("App", () => {
     expect(await screen.findByText("Todo List : 1")).toBeInTheDocument();
   });
 
-  it.only("api error scenario on load", async () => {
-    server.use(
-      http.get("https://dummyjson.com/todos", () => {
-        return  new HttpResponse('error ocurred', { status: 401, statusText: "error ocurred" });
-      })
-    );
+  it("api error scenario on load", async () => {
+    // chamamos os handlers dessa forma
+    server.use(todosErrorHandlers);
     render(<App />);
     expect(screen.queryByText("Todo List")).not.toBeInTheDocument();
     // expect(await screen.findByText("error ocurred")).toBeInTheDocument
